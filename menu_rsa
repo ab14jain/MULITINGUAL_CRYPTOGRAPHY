@@ -1,0 +1,70 @@
+function [output,time,fname]=menu_rsa(name)
+tStart=tic;
+fid=fopen(name,'r');
+input='';
+tline = fgets(fid);
+input=[input,tline];
+while ischar(tline)
+    tline = fgets(fid);
+input=[input,tline];
+end
+% fclose(fid);
+% input=fgets(fid);
+% input
+% input
+fclose(fid);
+% Alice=upper(Alice);
+% Alice
+% stra=char(Alice);
+stra=char(input);
+l=length(stra);
+for i=1:l
+    if stra(i)==32
+        numa(i)=27;
+    else
+        numa(i)=stra(i)-64;
+    end
+end
+m=numa;
+p=503;
+q=499;
+if p<q
+    t=p;
+    p=q;
+    q=t;
+end
+n=p*q;
+phi=(p-1)*(q-1);
+e=3;
+a=gcd(3,phi);
+if a~=1
+    a=gcd(17,phi);
+    e=17;
+end
+if a~=1
+    a=gcd(65537,phi);
+    e=65537;
+end
+d=modinv(e,phi);
+% e
+% d
+% p
+% q
+% n
+for i=1:l
+    c(i)=crt(numa(i),e,n);
+end
+% disp('Ciphertext: ');
+% disp(c);
+fid=fopen('rsa_encrypt.txt','w');
+fname='rsa_encrypt';
+fprintf(fid,'%d',c);
+fclose(fid);
+fid=fopen('rsa_encrypt.txt','r');
+      str=fgets(fid);
+      output=str;
+      fclose(fid);
+      telasped=toc(tStart);
+      time=telasped;  
+end
+
