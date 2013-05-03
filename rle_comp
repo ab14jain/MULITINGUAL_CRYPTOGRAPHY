@@ -1,0 +1,136 @@
+function [res_rle_comp,filesize,filesize1,time,fname]=rle_comp(name)
+tStart=tic;
+fid=fopen(name,'r');
+if(fid<0)
+        error('could not open file "first_file.txt"');
+ end
+   
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);
+     
+     
+     fseek(fid, 0, 'bof');
+     fid1=fopen('r1.txt','W');
+ %converting the read file into binary file    
+    for i=1:filesize
+     num=fread(fid,1);
+     
+     remArr = [0 0 0 0 0 0 0 0];
+        remd = num;
+        quot = num;
+        i = 1;
+        while quot >= 1
+            remd = mod(quot,2);
+            quot = floor(quot/2);
+            remArr(i) = [remd];
+            i = i + 1;
+        end
+        
+        result = fliplr(remArr);
+        message1=result;
+%         disp(message1);
+   fprintf(fid1,'%d',message1);
+   
+    
+    end
+    
+fclose(fid);
+fclose(fid1);
+
+fid=fopen('r1.txt','r');
+fid1=fopen('rle.txt','w');
+fid2=fopen('rle_comp.txt','w');
+spce=32;
+ if(fid<0)
+        error('could not open file "r1.txt"');
+ end
+   
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);
+     c=0;
+     c1=0;
+     num=0;
+ %compressing the binary file    
+     fseek(fid, 0, 'bof');
+    
+         while ((fread(fid,1))~='1')
+             c=c+1;
+         end
+%          disp(c);
+       fprintf(fid1,'%d ',c);
+       
+         c1=c1+1;
+
+         while ((fread(fid,1))~='0')
+             c1=c1+1;
+             
+         end   
+%              disp(c1);
+        
+          fprintf(fid1,'%d',c1);
+          
+        
+    
+         c=0;
+         c1=0;     
+      while ~feof(fid)
+           c=c+1;
+         
+         while ((fread(fid,1))~='1')
+             c=c+1;
+         end   
+           fprintf(fid1,' %d',c);
+%           fprintf(fid1,'%c',spce);
+           c1=c1+1;
+         while ((fread(fid,1))~='0')
+             c1=c1+1;
+          end   
+%              disp(c1);
+ 
+          fprintf(fid1,' %d',c1);
+ 
+         c=0;
+         c1=0;
+      end
+      
+      filesize1 = ftell(fid1);
+     fseek(fid,-1,'eof');
+
+    fclose(fid1);
+      fid1=fopen('rle.txt','r');
+     
+    if(fread(fid,1)=='0')
+        
+        while(num ~= filesize1-2)
+            num=num+1;
+            res=fread(fid1,1);
+            fprintf(fid2,'%c',res);
+        end
+    else
+        while(num ~= filesize1)
+            num=num+1;
+            res=fread(fid1,1);
+            fprintf(fid2,'%c',res);
+        end    
+    end    
+     fclose(fid);
+     fclose(fid1);
+     fclose(fid2);
+          fid=fopen('rle_comp.txt','r');
+     fseek(fid,0,'eof');
+     filesize1 = ftell(fid);
+     filesize1
+     fseek(fid, 0, 'bof');
+     fclose(fid);
+      fname='rle_comp.txt';
+    fid=fopen('rle_comp.txt','r');
+   
+    res=fgets(fid);
+    res_rle_comp=res;
+    fclose(fid);
+    telasped=toc(tStart);
+    telasped
+      time=telasped;
+      
+
+end
