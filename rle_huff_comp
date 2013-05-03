@@ -1,0 +1,170 @@
+function [outpt_rle_huff,enco,dict,filesize,filesize1,time,fname]=rle_huff_comp(name)
+tStart=tic;
+fid=fopen(name,'r');
+if(fid<0)
+        error('could not open file "first_file.txt"');
+ end
+   
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);
+     
+     
+     fseek(fid, 0, 'bof');
+     fid1=fopen('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\r1.txt','W');
+     
+    for i=1:filesize
+     num=fread(fid,1);
+     
+     remArr = [0 0 0 0 0 0 0 0];
+        remd = num;
+        quot = num;
+        i = 1;
+        while quot >= 1
+            remd = mod(quot,2);
+            quot = floor(quot/2);
+            remArr(i) = [remd];
+            i = i + 1;
+        end
+        
+        result = fliplr(remArr);
+        message1=result;
+%         disp(message1);
+   fprintf(fid1,'%d',message1);
+   
+    
+    end
+fseek(fid, 0, 'eof');
+filesize = ftell(fid);
+fseek(fid, 0, 'bof');
+    
+    
+fclose(fid);
+fclose(fid1);
+
+fid=fopen('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\r1.txt','r');
+% a='';
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);   
+%      filesize
+     fseek(fid, 0, 'bof');
+% a=fgets(fid,filesize);
+a=fread(fid);
+% a
+len=length(a);
+% len
+fclose(fid);
+n=1;
+% a
+for k=1:length(a)
+     a(k)=a(k)-48;
+end
+% a
+for k=1:length(a)-1
+    if a(k)~=a(k+1)
+       n=n+1;
+    end
+end
+clear rle;
+rle=ones(1,n);
+m=1;
+for i=1:k
+    if a(i)==a(i+1)
+       rle(m)= rle(m)+1;
+    else
+       m=m+1;
+     end
+end
+% if a(k)~=a(k-1) 
+%  rle(m)= rle(m)+1;
+% end
+rle(m)= rle(m)+1;
+% rle
+
+x = unique(rle);
+%  x
+clear z;
+for y = 1:length(x)
+  m=0;
+  for p = 1:length(rle)
+    if x(y)==rle(p)
+       m=m+1;
+    end
+  end
+  z(y)=x(y);
+  z1(y)=m;
+end
+% z1
+tot=sum(z1);
+% tot
+clear t
+for y=1:length(z)
+    t(y)=z1(y)/tot;
+end
+%t
+%format long
+%t
+
+rle1=zeros(1,max(x));
+for s=1:length(x)
+    rle1(x(s))=z1(s);
+end
+% rle1
+dict = huffmandict(x,t);
+% rle
+dict
+% save('C:\Documents and Settings\Administrator\My Documents\MATLAB\RECEIVER\VAR','dict');
+save('D:\MULITINGUAL_CRYPTOGRAPHY\RECEIVER\VAR','dict');
+% m=cell2mat(dict);
+% m
+% fid10=fopen('dict_rle_huff.txt','w');
+% fwrite(fid10,dict);
+% fclose(fid10);
+enco = huffmanenco(rle,dict);
+%  enco
+enco = enco';
+display done;
+save('D:\MULITINGUAL_CRYPTOGRAPHY\RECEIVER\VAR1','enco');
+fid1 = fopen('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\rle_huff_comp.txt','w');
+pad_len = 8 - mod(length(enco),8);
+% pad_len
+if(pad_len ~= 8)
+  enco(end+1:end+1+pad_len)=0;
+end
+y=1;
+str='';
+clear str1;
+for i = 1 : length(enco)
+    str = strcat(str,num2str(enco(i)));
+   
+    if(length(str) == 8)
+       str1(y)=bin2dec(str);
+%        str1
+%        fprintf(fid1,'%d',str1(y));
+       y=y+1;
+       str = '';
+    end
+end
+% str1
+rle4(1)=pad_len;
+for i = 1:length(rle1);
+    rle4(i+1)=rle1(i);
+end
+% fwrite(fid1, str1);
+fprintf(fid1,'%d',str1);
+
+fclose(fid1);
+res='';
+fname='rle_huff_comp.txt';
+fid=fopen('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\rle_huff_comp.txt','r');
+fseek(fid, 0, 'eof');
+filesize1 = ftell(fid);
+fseek(fid, 0, 'bof');
+while ~feof(fid)
+    num=fgets(fid);
+    res=strcat(res,num);
+end
+outpt_rle_huff=res;
+telasped=toc(tStart);
+      time=telasped;
+end
+
