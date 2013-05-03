@@ -1,0 +1,19 @@
+function [result,time,fname]= zip_decomp(name)
+tStart=tic;
+unzip('zip1','RECEIVER');
+fname=name;
+fid=fopen(name,'r');
+     res='';
+tline = fgets(fid);
+res=[res,tline];
+while ischar(tline)
+    tline = fgets(fid);
+res=[res,tline];
+end
+
+fclose(fid);
+result=res;
+ telasped=toc(tStart);
+      time=telasped;  
+end
+
