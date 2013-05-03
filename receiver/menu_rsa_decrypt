@@ -1,0 +1,101 @@
+function [output,time]=menu_rsa_decrypt(name)
+tStart=tic;
+fid=fopen(name,'r');
+fid
+input='';
+tline = fgets(fid);
+input=[input,tline];
+while ischar(tline)
+    tline = fgets(fid);
+input=[input,tline];
+end
+% fclose(fid);
+% input=fgets(fid);
+% input
+input
+fclose(fid);
+% Alice=upper(Alice);
+% Alice
+% stra=char(Alice);
+stra=char(input);
+l=length(stra);
+for i=1:l
+    if stra(i)==32
+        numa(i)=27;
+    else
+        numa(i)=stra(i)-64;
+    end
+end
+m=numa;
+p=503;
+q=499;
+if p<q
+    t=p;
+    p=q;
+    q=t;
+end
+n=p*q;
+phi=(p-1)*(q-1);
+e=3;
+a=gcd(3,phi);
+if a~=1
+    a=gcd(17,phi);
+    e=17;
+end
+if a~=1
+    a=gcd(65537,phi);
+    e=65537;
+end
+d=modinv(e,phi);
+e
+d
+p
+q
+n
+for i=1:l
+    c(i)=crt(numa(i),e,n);
+end
+disp('Ciphertext: ');
+disp(c);
+for i=1:l
+    md(i)=powm(c(i),d,n);
+end
+disp('Message Deciphered: ');
+disp(md);
+for i=1:l
+    if md(i)==27
+        mdc(i)=32;
+    else
+        mdc(i)=md(i)+64;
+    end
+    
+end
+Bob='';
+mdc
+fid=fopen('res_rsa.txt','w');
+for i=1:length(mdc)
+    if(mdc(i)>2000)
+%         if(mdc(i)==250959)
+%             fprintf(fid,'%d',mdc(i)-251000); 
+%         end    
+        fprintf(fid,'%c',mdc(i)-251000+3); 
+    else
+        fprintf(fid,'%c',mdc(i));        
+    end
+end
+fclose(fid);
+fid = fopen('res_rsa.txt','r');
+res='';
+tline = fgets(fid);
+res=[res,tline];
+while ischar(tline)
+    tline = fgets(fid);
+res=[res,tline];
+end
+
+fclose(fid);
+output=res;
+telasped=toc(tStart);
+      time=telasped;  
+end
+
