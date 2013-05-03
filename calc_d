@@ -1,0 +1,27 @@
+function output = calc_d(d0)
+a=d0(1);
+    for j=1:27
+        c_res2(1,j) = d0(j+1);
+    end
+ c_res2(1,28)=a;     
+for i = 2:16
+        if(i==2||i==9||i==16)
+            a =c_res2(i-1,1);
+            for j = 1:27
+            c_res2(i,j)=c_res2(i-1,j+1);
+            end
+            c_res2(i,28)=a;
+        else
+            a =c_res2(i-1,1);
+            b = c_res2(i-1,2);
+            for j = 1:26
+            c_res2(i,j)=c_res2(i-1,j+2);
+            end
+            c_res2(i,27)=a;
+            c_res2(i,28)=b;
+        end
+end
+    output = c_res2;
+
+end
+
