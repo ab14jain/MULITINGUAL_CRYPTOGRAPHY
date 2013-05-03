@@ -1,0 +1,63 @@
+function [result,filesize,filesize1,time,fname]= zip_comp(name)
+tStart=tic;
+zip('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\zip1',name);
+fid=fopen('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\zip1.zip','r');
+if(fid<0)
+    disp('error');
+end
+fseek(fid, 0, 'eof');
+filesize = ftell(fid);
+fseek(fid, 0, 'bof');
+fclose(fid);
+fid=fopen(name,'r');
+    if(fid<0)
+        error('could not open the file "first_file.txt"');
+    end
+   
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);
+     
+     
+     fseek(fid, 0, 'bof');
+     fid1=fopen('D:\MULITINGUAL_CRYPTOGRAPHY\SENDER\y.txt','W');
+     for i=1:filesize
+     num=fread(fid,1);
+     remArr = [0 0 0 0 0 0 0 0];
+        remd = num;
+        quot = num;
+        i = 1;
+        while quot >= 1
+            remd = mod(quot,2);
+            quot = floor(quot/2);
+            remArr(i) = [remd];
+            i = i + 1;
+        end
+        
+        result = fliplr(remArr);
+        message1=result;
+%         disp(message1);
+   fprintf(fid1,'%d',message1);
+     
+     end
+     
+fseek(fid1,0','eof');
+filesize1 = ftell(fid1);
+fseek(fid1, 0, 'bof');
+    fclose(fid)
+    fclose(fid1);
+    fid=fopen(name,'r');
+    fname=name;
+     res='';
+tline = fgets(fid);
+res=[res,tline];
+while ischar(tline)
+    tline = fgets(fid);
+res=[res,tline];
+end
+
+fclose(fid);
+result=res;
+   telasped=toc(tStart);
+      time=telasped;  
+end
+
