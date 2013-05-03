@@ -1,0 +1,114 @@
+function [outpt_rle_huff_decomp,time1,fname,filesize,filesize1]=rle_huff_decomp(name)
+load('D:\MULITINGUAL_CRYPTOGRAPHY\RECEIVER\VAR','dict');
+load('D:\MULITINGUAL_CRYPTOGRAPHY\RECEIVER\VAR1','enco');
+
+tStart=tic;
+fid=fopen('test3.txt','w');
+fid1=fopen(name,'r');
+fseek(fid1, 0, 'eof');
+filesize = ftell(fid1);
+fseek(fid1, 0, 'bof');
+enco
+dict
+dsig = huffmandeco(enco,dict);
+% dsig
+dsig=dsig';
+display done_decompression;
+
+fprintf(fid,'%d',dsig);
+filesize=ftell(fid);
+% filesize
+fclose(fid);
+fclose(fid1);
+
+fid=fopen('test3.txt','r');
+fid1=fopen('test4.txt','w');
+flag=0;
+fseek(fid, 0, 'eof');
+filesize = ftell(fid);
+% filesize
+fseek(fid, 0, 'bof');
+j=0;
+% while i<=(filesize-8)
+%     num=fread(fid,1);
+%     i=i+1;
+%    if(num~=32) 
+%      if(flag==0)
+%          for i=1:(num-48)
+%              fprintf(fid1,'%d',0);
+%          end
+%          flag=1;
+%      else
+%          for i=1:(num-48)
+%              fprintf(fid1,'%d',1);
+%          end
+%          flag=0;
+%      end
+%    else
+% %        n=0;
+%    end
+%         
+% end
+% while j<(filesize-pad_len)
+while j<(filesize)
+    num=fgets(fid,1);
+    j=j+1;
+%     j
+    if(flag==0)
+          for i=1:(num-48)
+             fprintf(fid1,'%d',0);
+         end
+         flag=1;
+     else
+         for i=1:(num-48)
+             fprintf(fid1,'%d',1);
+         end
+         flag=0;
+    end
+end     
+         
+
+fclose(fid);
+  fclose(fid1);
+  fid=fopen('test4.txt','r');
+  fseek(fid, 0, 'eof');
+filesize1 = ftell(fid);
+fseek(fid, 0, 'bof');
+  fid1=fopen('rle_huff_decomp.txt','w');
+  fseek(fid, 0, 'eof');
+filesize = ftell(fid);    
+% filesize
+fseek(fid, 0, 'bof');
+i=0;
+  while ~feof(fid)
+      num=fgets(fid,8);
+      conv=bin2dec(num);
+%       disp(num);
+%       disp(conv);
+      fprintf(fid1,'%c',conv);
+  end
+  
+  fclose(fid);
+  fclose(fid1);
+res='';
+fname='rle_huff_decomp.txt';
+fid=fopen('rle_huff_decomp.txt','r');
+% while ~feof(fid)
+%     num=fgets(fid);
+%     res=strcat(res,num);
+% endfid = fopen('first_file.txt','r');
+res='';
+tline = fgets(fid);
+res=[res,tline];
+while ischar(tline)
+    tline = fgets(fid);
+res=[res,tline];
+end
+
+fclose(fid);
+outpt_rle_huff_decomp=res;
+telasped=toc(tStart);
+      time1=telasped;
+
+end
+
