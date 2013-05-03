@@ -1,0 +1,47 @@
+function [output1,time,fname]=menu_des_decrypt(name)
+tStart=tic;
+ fid1=fopen(name,'r');
+   fid2=fopen('y2.txt','W');
+    while ~feof(fid1)
+        message=fgets(fid1,16);
+%          disp(message);
+         result=decrypt_des1(message);
+         fwrite(fid2,result);
+%         fprintf(fid2,'%c',0);
+    end    
+     
+    fclose(fid1);
+      fclose(fid2);
+      
+      fid1=fopen('y2.txt','r');
+      fid2=fopen('des_decrypt.txt','W');
+      
+      while ~feof(fid1)
+          num=fgets(fid1,2);
+%           disp(num);
+          num1=hex2dec(num);
+%           disp(num1);
+%            fwrite(fid2,num1);
+fprintf(fid2,'%c',num1);
+      end
+      
+      fclose(fid1);
+      fclose(fid2);
+      res='';
+      res1='';
+ fname='des_decrypt.txt';
+fid = fopen('des_decrypt.txt','r');
+res='';
+tline = fgets(fid);
+res=[res,tline];
+while ischar(tline)
+    tline = fgets(fid);
+res=[res,tline];
+end
+
+fclose(fid);
+output1=res;
+telasped=toc(tStart);
+      time=telasped;
+end
+
