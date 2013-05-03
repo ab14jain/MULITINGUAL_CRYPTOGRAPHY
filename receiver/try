@@ -1,0 +1,205 @@
+function[output,filesize1,fname]=try_des_menu(name,key,param)
+% tStart=tic;
+disp('decrypt');
+fid=fopen('key.txt','w');
+fprintf(fid,'%s',key);
+fclose(fid);
+fid=fopen('key.txt','r+');
+key1=fgets(fid);
+% key1
+len=length(key1);
+% len
+if(len~=16)
+    pad_len=16-len;
+%     pad_len
+ for i=1:pad_len
+     fprintf(fid,'%d',0);
+ end
+end
+fseek(fid, 0, 'bof');
+  key1=fgets(fid);
+%   key1
+fclose(fid);  
+% param=input('1.encryption 2.decryption','s');
+% param
+switch(param)
+    case {'1'}
+        fid=fopen(name,'r');
+    if(fid<0)
+        error('could not open file "testing.txt"');
+    end
+   
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);
+     
+     
+     fseek(fid, 0, 'bof');
+     fid1=fopen('y.txt','W');
+     fid2=fopen('y1.txt','W');
+    for i=1:filesize
+     num=fread(fid,1);
+     remArr = [0 0 0 0 0 0 0 0];
+        remd = num;
+        quot = num;
+        i = 1;
+        while quot >= 1
+            remd = mod(quot,2);
+            quot = floor(quot/2);
+            remArr(i) = [remd];
+            i = i + 1;
+        end
+        
+        result = fliplr(remArr);
+        message1=result;
+%         disp(message1);
+   fprintf(fid1,'%d',message1);
+   
+    
+    end
+    
+    
+%     fwrite(fid1,message);
+    disp('please wait while the output is being generated.........');
+    
+    fseek(fid1, 0, 'eof');
+     filesize1 = ftell(fid1);
+%      filesize1
+         rem= mod(filesize1,64);
+     if(rem==0)
+         flag=0;
+     else
+         flag=1;
+     end
+     
+     
+     if(flag==1)
+         padding=64-rem;
+           for i=1:padding
+             fprintf(fid1,'%d',0);
+           end
+     end
+  
+    fseek(fid1, 0, 'eof');
+     filesize1 = ftell(fid1);
+%      disp(filesize1);
+    fclose(fid1);
+     fid1=fopen('y.txt','r+');
+    
+       
+     while ~feof(fid1)
+         message=fgets(fid1,64);
+%          disp(message);
+         result=encrypt_des(message,key1,1);
+         fwrite(fid2,result);
+%          disp(result);
+     end    
+         
+     fclose(fid1);
+      fclose(fid2);
+      fid=fopen('y1.txt','r');
+      fname='y1.txt';
+      str=fgets(fid);
+%       str
+      output=str;
+      fclose(fid);
+    case {'2'}
+          fid=fopen(name,'r');
+     if(fid<0)
+        error('could not open file "y1.txt"');
+     end
+   
+     fseek(fid, 0, 'eof');
+     filesize = ftell(fid);
+     
+     
+     fseek(fid, 0, 'bof');
+     fid1=fopen('y2.txt','W');
+     fid2=fopen('y3.txt','W');
+    for i=1:filesize
+     num=fread(fid,1);
+     remArr = [0 0 0 0 0 0 0 0];
+        remd = num;
+        quot = num;
+        i = 1;
+        while quot >= 1
+            remd = mod(quot,2);
+            quot = floor(quot/2);
+            remArr(i) = [remd];
+            i = i + 1;
+        end
+        
+        result = fliplr(remArr);
+        message1=result;
+%         disp(message1);
+   fprintf(fid1,'%d',message1);
+   
+    
+    end
+    
+    
+%     fwrite(fid1,message);
+    disp('please wait while the output is being generated.........');
+    
+    fseek(fid1, 0, 'eof');
+     filesize1 = ftell(fid1);
+%      filesize1
+         rem= mod(filesize1,64);
+     if(rem==0)
+         flag=0;
+     else
+         flag=1;
+     end
+     
+     
+     if(flag==1)
+         padding=64-rem;
+           for i=1:padding
+             fprintf(fid1,'%d',0);
+           end
+     end
+  
+    fseek(fid1, 0, 'eof');
+     filesize1 = ftell(fid1);
+%      disp(filesize1);
+    fclose(fid1);
+     fid1=fopen('y2.txt','r+');
+    
+       
+     while ~feof(fid1)
+         message=fgets(fid1,64);
+%          disp(message);
+         result=encrypt_des(message,key1,2);
+         fwrite(fid2,result);
+%          disp(result);
+     end    
+         
+     fclose(fid1);
+      fclose(fid2);      
+
+
+      
+      fid1=fopen('y3.txt','r');
+      fid2=fopen('des.txt','W');
+      
+      while ~feof(fid1)
+          num=fgets(fid1,2);
+%           disp(num);
+          num1=hex2dec(num);
+%           disp(num1);
+           fwrite(fid2,num1);
+      end
+      
+      fclose(fid1);
+      fclose(fid2);
+      fid=fopen('des.txt','r');
+      fname='des.txt';
+      str=fgets(fid);
+%       str
+      output=str;
+      fclose(fid);
+end   
+      
+%       telasped=toc(tStart);
+%       time=telasped;
+end
+
