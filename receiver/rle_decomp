@@ -1,0 +1,78 @@
+function [res_rle_decomp,time,fname,filesize,filesize1] =rle_decomp(name)
+name
+tStart=tic;
+fid=fopen(name,'r');
+fid1=fopen('decompress_rle.txt','w');
+flag=0;
+fseek(fid, 0, 'eof');
+     filesize = ftell(fid);     
+     fseek(fid, 0, 'bof');
+% while ~feof(fid
+%     num=fscanf(fid,'%d',1);
+%     if(flag==0)
+%         for i=1:num
+%             fprintf(fid1,'%d',0);
+%             flag=1;
+%         end
+%     else
+%         for i=1:num
+%             fprintf(fid1,'%d',1);
+%             flag=0;
+%         end
+%     end    
+% end
+count1=0;
+for k=1:filesize
+    msg5=fscanf(fid,'%d',1);
+    if ~isempty(msg5)
+        count1=count1+1;
+        if mod(count1,2)==0
+            for i=1:msg5
+                fprintf(fid1,'%c','1');
+            end
+        else
+            for j=1:msg5
+                fprintf(fid1,'%c','0');
+            end
+        end
+    end
+end
+fclose(fid);
+fclose(fid1);
+fid=fopen('decompress_rle.txt','r');
+fseek(fid, 0, 'eof');
+     filesize1 = ftell(fid);     
+     fseek(fid, 0, 'bof');
+% fid1=fopen('output_rle.txt','w');
+fid1=fopen('rle_decomp.txt','w');
+%arr=[];
+while ~feof(fid)
+   arr=fscanf(fid,'%c',8);
+   num=bin2dec(arr);
+   fprintf(fid1,'%c',num);
+   disp(arr);
+   disp(num);
+end   
+    
+fclose(fid);
+fclose(fid1);
+    
+fid = fopen('rle_decomp.txt','r');
+% fseek(fid, 0, 'eof');
+% filesize1 = ftell(fid);     
+%  fseek(fid, 0, 'bof');
+res='';
+fname='rle_decomp.txt';
+tline = fgets(fid);
+res=[res,tline];
+while ischar(tline)
+    tline = fgets(fid);
+res=[res,tline];
+end
+
+fclose(fid);
+res_rle_decomp=res;
+telasped=toc(tStart);
+    telasped
+      time=telasped;
+end
