@@ -1,0 +1,6 @@
+function[a]=randl()
+r=randint(1,1,100); % here command means generate 1 random numbers between 1 and 100
+x=primes(1000); % here commands means find prime numbers less than or equal r
+a=x(r);
+
+
